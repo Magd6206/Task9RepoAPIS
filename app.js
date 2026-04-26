@@ -190,6 +190,6 @@ app.delete("/api/v1/crews/:id" , (req , res)=>{
 const PORT = process.env.PORT
 app.listen(PORT , () => {
     //http://localhost:3000/
-  console.log(`Server is Running AS Port : ${PORT}`);
+  console.log(`Server is Running AS Port : ${PORT} ${process.env.username }`);
   
 });
