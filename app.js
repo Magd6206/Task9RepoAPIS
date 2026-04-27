@@ -10,7 +10,26 @@ const looger = (req , res , next) => {
     console.log(`[${timestamp}] ${method} ${url} - IP: ${clientIp}`);
     next();
 };
-app.use(looger);
+let i =0;
+// const rateLimit = (req , res , next) => {
+//   i++;
+//   if(i>3){
+//   return res.status(429).json({
+//             message : "Too Many Requests"
+//         })}
+//     next();
+// }
+// app.use(rateLimit);
+const testRole = (value) => { 
+    return (req, res , next)=>{
+        if(value === "admin"){
+           return next();
+        }
+        return res.status(403).json({
+            message : "Forbidden"
+        })
+    }
+}
 app.use(express.json());
 const {crews , shifts} = require("./data");
 
@@ -18,7 +37,7 @@ const {crews , shifts} = require("./data");
 
 //all API crews: 
 
-app.get("/api/v1/crews" , (req ,res)=>{
+app.get("/api/v1/crews" ,[testRole("admin")], (req ,res)=>{
    const allCrews = crews;
    if(!allCrews){
     return res.status(404).json({
