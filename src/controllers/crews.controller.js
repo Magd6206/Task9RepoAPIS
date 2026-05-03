@@ -1,8 +1,8 @@
-const { crews } = require("../../data");
+const crews = require("../models/Crews");
 class crwesController {
  
-  getallcrwes = (req ,res)=>{
-   const allCrews = crews;
+  getallcrwes = async (req ,res)=>{
+   const allCrews = await crews.find();
    if(!allCrews){
     return res.status(404).json({
         Message : "No Crews Found",
@@ -11,7 +11,7 @@ class crwesController {
    }
     res.status(200).json({
         success: true,
-        data: crews
+        data: allCrews
     })
 }
 getbyid = (req , res)=>{
@@ -29,18 +29,17 @@ getbyid = (req , res)=>{
     })
     
 }
-addcrew = (req , res)=>{
+addcrew =  async (req , res)=>{
     const { name  , role , active} = req.body;
+    const newCrew = await crews.create({name , role , active});
     if(!name || !role || active === undefined){
         return res.status(400).json({
             Message : "No Crews Found",
             data : []
         });}
-        const newCrew = {id : crews.length + 1 , name , role , active};
-        crews.push(newCrew);
         return  res.status(200).json({
         success: true,
-        data: crews
+        data: newCrew
     });
       
     
@@ -63,9 +62,10 @@ addcrew = (req , res)=>{
     })
 
 }
-deletecrew = (req , res)=>{
+deletecrew =  async (req , res)=>{
    const id = req.params.id;
-   const crew = crews.filter(c => c.id !== +id);
+   const crew = await crews.findByIdAndDelete(id);
+   const allCrews = await crews.find();
     if(!crew){
         return res.status(404).json({
             Message : "No Crews Found",
@@ -74,7 +74,7 @@ deletecrew = (req , res)=>{
     }
      res.status(200).json({
         success: true,
-        data: crews
+        data: allCrews
     })
 }
 }
